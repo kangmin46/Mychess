@@ -55,7 +55,7 @@ public class ChessLabel extends JLabel {
                                 boardUtil.ActiveMove(columnPos, rowPos);
                             }
                             else{
-                                boardUtil.ShowCandidateTile(columnPos, rowPos);
+                                    boardUtil.ShowCandidateTile(columnPos, rowPos);
                             }
                         }
                         else{
@@ -64,7 +64,12 @@ public class ChessLabel extends JLabel {
                         }
                     }
                     else{
-                        boardUtil.ShowCandidateTile(columnPos, rowPos);
+                        if(board.getTile()[columnPos][rowPos].isOccupied()) {
+                            boardUtil.ShowCandidateTile(columnPos, rowPos);
+                        }
+                        else {
+                           boardUtil.ClearTile();
+                        }
                     }
                 }
                 else{

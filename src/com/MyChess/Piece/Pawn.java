@@ -68,7 +68,6 @@ public class Pawn extends Piece {
         
     }
     public void CanAttackMove(){
-        Board board = this.getboard();
         for(int j=0;j<2;j++) {
             this.columnCandidate = this.columnPos + PawnMove[j][0];
             this.rowCandidate = this.rowPos + PawnMove[j][1];

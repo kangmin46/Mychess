@@ -28,7 +28,4 @@ public class King extends Piece {
         return pieceName;
     }
 
-    public void  pieceMove(int piecePosition, int destination){
-
-    };
 }
