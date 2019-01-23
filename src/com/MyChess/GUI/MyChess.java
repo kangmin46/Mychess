@@ -1,22 +1,18 @@
 package com.MyChess.GUI;
 
 import com.MyChess.Board.Board;
-import com.MyChess.Board.BoardUtil;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 import static com.MyChess.Board.Board.getBoard;
 
 public class MyChess extends JFrame {
 
     public static ChessLabel[][] jlabel = new ChessLabel[8][8];
-    static ImageIcon circle= new ImageIcon("images/circle.png");
     BevelBorder border = new BevelBorder(BevelBorder.RAISED);
-    BoardUtil boardUtil = BoardUtil.getBoardUtil();
+
     MyChess(){
         JFrame jframe = new JFrame("MyChess Game");
         jframe.setSize(800,800);
@@ -33,8 +29,8 @@ public class MyChess extends JFrame {
         for(int j=0;j<8;j++) {  //Create Chess board
             for (int i = 0; i < 8; i++) {
                 if(board.getTile()[j][i].isOccupied()){
-                        ImageIcon image = new ImageIcon("images/"
-                                + board.getTile()[j][i].getTileOnPiece().getPieceName() + ".gif");
+                    ImageIcon image = new ImageIcon("images/"
+                            + board.getTile()[j][i].getTileOnPiece().getPieceName() + ".gif");
                     jlabel[j][i] = new ChessLabel(j,i);
                     jlabel[j][i].setIcon(image);
                     jlabel[j][i].setHorizontalAlignment(JLabel.CENTER);
@@ -44,7 +40,7 @@ public class MyChess extends JFrame {
                 }
                 if (j % 2 == 0) {
                     if(i%2 ==0){
-                       board.getTile()[j][i].setTileColor(Color.CYAN);
+                        board.getTile()[j][i].setTileColor(Color.CYAN);
                         jlabel[j][i].setBackground(Color.CYAN);
                     }
                     else{

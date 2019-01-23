@@ -16,29 +16,9 @@ public class ChessLabel extends JLabel {
 
     private int rowPos;
     private int columnPos;
-    private Color color;
-    private int[] selectedPice;
-    private Board board = Board.getBoard();
+
     BoardUtil boardUtil = BoardUtil.getBoardUtil();
 
-    private boolean isColorOrange = false;
-
-
-    public int getrowPos() {
-        return rowPos;
-    }
-
-    public int getcolumnPos() {
-        return columnPos;
-    }
-
-    public void setColorOrange(boolean colorOrange) {
-        isColorOrange = colorOrange;
-    }
-
-    public boolean isColorOrange() {
-        return isColorOrange;
-    }
 
     public ChessLabel(int columnPos,int rowPos){
         this.rowPos = rowPos;
@@ -47,21 +27,10 @@ public class ChessLabel extends JLabel {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e)   {
+                Board board = Board.getBoard();
                 if (boardUtil.isPieceClicked()) {
                     if(board.getTile()[columnPos][rowPos].isCandidateTile()){
-                        if(board.getTile()[columnPos][rowPos].isOccupied()){
-                            if(boardUtil.isEnemy(columnPos,rowPos)){
-                                //Attacking Move
-                                boardUtil.ActiveMove(columnPos, rowPos);
-                            }
-                            else{
-                                    boardUtil.ShowCandidateTile(columnPos, rowPos);
-                            }
-                        }
-                        else{
-                            System.out.println("Normal Move");
                             boardUtil.ActiveMove(columnPos, rowPos);
-                        }
                     }
                     else{
                         if(board.getTile()[columnPos][rowPos].isOccupied()) {
@@ -79,9 +48,5 @@ public class ChessLabel extends JLabel {
                 }
             }
         });
-
-    }
-    public void setColor(Color color) {
-        this.color = color;
     }
 }

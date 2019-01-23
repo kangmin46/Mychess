@@ -19,13 +19,9 @@ public class Position {
         }
         return position;
     }
-
-    public void setRow_Position(int rowPos) {
-        this.row_PosList.add(rowPos);
-    }
-
-    public void setColumn_Position(int columnPos) {
+    public void setPosition(int columnPos,int rowPos){
         this. column_PosList.add(columnPos);
+        this.row_PosList.add(rowPos);
     }
 
     public List<Integer> getRow_PosList() {
