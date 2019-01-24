@@ -28,10 +28,8 @@ public class BishopMovingStr implements MovingStrategy{
     }
 
     public void Move(int columnPos,int rowPos){
-        System.out.println("Bishop Move");
+
         Tile tile = board.getTile()[columnPos][rowPos];
-        System.out.println(columnPos);
-        System.out.println(rowPos);
         for(int j=0;j<4;j++) {
             for (int i = 0; i < 7; i++) {
                 columnCandidate = columnPos + bishopMove[j][i][0];

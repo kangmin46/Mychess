@@ -27,9 +27,18 @@ public class KingMovingStr implements MovingStrategy {
             for (int i = 0; i < 8; i++) {
                 columnCandidate = columnPos + kingMove[i][0];
                 rowCandidate = rowPos + kingMove[i][1];
-
                 if (boardUtil.isValidMove(columnCandidate, rowCandidate)) {
                     Tile canTile = board.getTile()[columnCandidate][rowCandidate];
+                    if(tile.getPiece().getPieceName().charAt(0)=='W'){
+                        if(canTile.isbTemMove()){
+                            continue;
+                        }
+                    }
+                    else{
+                        if(canTile.iswTemMove()){
+                            continue;
+                        }
+                    }
                     if (canTile.isOccupied()) {
                         if (boardUtil.isEnemy(tile.getPiece(), canTile.getPiece())) {
                             position.setPosition(columnCandidate, rowCandidate);
@@ -39,6 +48,5 @@ public class KingMovingStr implements MovingStrategy {
                     }
                 }
             }
-
     }
 }

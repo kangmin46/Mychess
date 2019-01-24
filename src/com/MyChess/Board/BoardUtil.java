@@ -9,6 +9,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
+import static com.MyChess.Board.VirtualBoard.getVirtualBoard;
 import static com.MyChess.GUI.MyChess.jlabel;
 
 public class BoardUtil {
@@ -26,6 +27,10 @@ public class BoardUtil {
     private Board board;
     private Tile[][] tile;
 
+    private boolean isPawnMove =true;
+    private VirtualBoard virtualBoard = getVirtualBoard();
+    private Tile[][] virtualTile =virtualBoard.getTile();
+
     public void setTileLabel(int pastCol,int pastRow,int preCol,int preRow ){
 
         this.pastLabel = jlabel[pastCol][pastRow];
@@ -33,6 +38,11 @@ public class BoardUtil {
         this.pastTile = board.getTile()[pastCol][pastRow];
         this.presentTile = board.getTile()[preCol][preRow];
     }
+    /*public boolean isFutureMove(Piece piece, int futureCol,int futureRow){
+        //true 일때 오렌지색 표시
+        virtualBoard.getTile()[futureCol][futureRow]
+
+    }*/
 
     private static int[] selectedPiece = new int[2];
     private Color color;
@@ -46,18 +56,16 @@ public class BoardUtil {
     }
 
     public void setMovingStrategy(MovingStrategy movingStrategy) {
-        System.out.println(movingStrategy);
         this.movingStrategy = movingStrategy;
     }
 
     public void RequestCandidate(int columnPosition, int rowPosition){
-        System.out.println("여기");
+
         String pieceName = tile[columnPosition][rowPosition].getTileOnPiece().getPieceName();
-        System.out.println("여기까지");
-        System.out.println(pieceName.charAt(1));
+
         switch (pieceName.charAt(1)){
             case 'P':
-                setMovingStrategy(new PawnMovingStr());;
+                setMovingStrategy(new PawnMovingStr());
                 break;
             case 'N':
                 setMovingStrategy(new KnightMovingStr());
@@ -76,7 +84,6 @@ public class BoardUtil {
                 break;
         }
         this.movingStrategy.Move(columnPosition,rowPosition);
-        System.out.println("Moving 끝");
     }
     public void ClearTile(){
         if(rowPosList!=null && columnPosList!=null) {
@@ -87,6 +94,15 @@ public class BoardUtil {
             }
             rowPosList.clear();
             columnPosList.clear();
+        }
+
+    }
+    public void InitializeTemMove(){
+        for(int j=0;j<8;j++){
+            for(int i=0;i<8;i++){
+                virtualTile[j][i].setbTemMove(false);
+                virtualTile[j][i].setwTemMove(false);
+            }
         }
     }
 
@@ -113,12 +129,14 @@ public class BoardUtil {
         if(!rowPosList.isEmpty() && !columnPosList.isEmpty()) {
             this.ClearTile();
         }
+        this.isPawnMove=false;
         this.RequestCandidate(columnPos,rowPos);
             for(int i=0;i<rowPosList.size();i++){
-                jlabel[columnPosList.get(i)]
-                        [rowPosList.get(i)].setBackground(Color.orange);
-               tile[columnPosList.get(i)]
-                        [rowPosList.get(i)].setCandidateTile(true);
+                Piece piece = tile[columnPos][rowPos].getPiece();
+                    jlabel[columnPosList.get(i)]
+                            [rowPosList.get(i)].setBackground(Color.orange);
+                    tile[columnPosList.get(i)]
+                            [rowPosList.get(i)].setCandidateTile(true);
             }
     }
 
@@ -130,24 +148,61 @@ public class BoardUtil {
         return isPieceClicked;
     }
 
+
+    public void deleteTemMove(Tile presentTile,int columnPos,int rowPos){
+        this.RequestCandidate(columnPos,rowPos);
+            if (presentTile.getPiece().getPieceName().charAt(0) == 'W') {
+                for (int i = 0; i < columnPosList.size(); i++) {
+                    tile[columnPosList.get(i)][rowPosList.get(i)].setwTemMove(false);
+                }
+            } else {
+                for (int i = 0; i < columnPosList.size(); i++) {
+                    tile[columnPosList.get(i)][rowPosList.get(i)].setbTemMove(false);
+                }
+            }
+    }
+
+    public boolean isPawnMove() {
+        return isPawnMove;
+    }
+
+    public void settingTemMove(){
+
+        for(int j=0;j<8;j++){
+            for(int i=0;i<8;i++){
+                if(tile[j][i].isOccupied()){
+                    this.RequestCandidate(j,i);
+                    if(tile[j][i].getPiece().getPieceName().charAt(0)=='W') {
+                        for (int k = 0; k < columnPosList.size(); k++) {
+                            tile[columnPosList.get(k)][rowPosList.get(k)].setwTemMove(true);
+                        }
+                    }
+                    else{
+                        for (int k = 0; k < columnPosList.size(); k++) {
+                        tile[columnPosList.get(k)][rowPosList.get(k)].setbTemMove(true);
+                    }
+                    }
+                }
+                this.ClearTile();
+            }
+        }
+    }
+
     public void ActiveMove(int columnPos,int rowPos){
 
         this.setTileLabel(selectedPiece[0],selectedPiece[1],columnPos,rowPos);
-        if(presentTile.isCandidateTile()){
+        deleteTemMove(pastTile,selectedPiece[0],selectedPiece[1]);
+        if(presentTile.isOccupied()){
+            deleteTemMove(presentTile,columnPos,rowPos);
+        }
             Icon icon = pastLabel.getIcon();
-            pastLabel.setIcon(null);
-            if(presentTile.isOccupied()){
+                pastLabel.setIcon(null);
                 presentTile.removePiece();
                 presentLabel.setIcon(null);
-                //ActiveAttackingMove
-            }
-            else {
-                //ActiveNormalMove
                 if(pastTile.getPiece().getPieceName().equals("BP")||
                         pastTile.getPiece().getPieceName().equals("WP")){
                     ((Pawn)pastTile.getPiece()).setFirstMove(false);
                 }
-            }
             presentTile.setTileOnPiece(pastTile.getTileOnPiece());
             presentLabel.setIcon(icon);
             presentLabel.setHorizontalAlignment(JLabel.CENTER);
@@ -157,11 +212,20 @@ public class BoardUtil {
             pastTile.setOccupied(false);
             this.isPieceClicked = false;
             pastTile.removePiece();
-        }
+            this.ClearTile();
+            this.InitializeTemMove();
+            this.isPawnMove=true;
+            this.settingTemMove();
+            this.Check(columnPos,rowPos);
 
-        else{
+    }
+    public void Check(int columnPos,int rowPos){
+        if(this.isCheck(columnPos,rowPos)){
+            System.out.println("!!!!!Check Event !!!!");
         }
-        this.ClearTile();
+    }
+    public void SwapTurn(){
+
     }
     public boolean isEnemy(Piece piece ,Piece piece2 ){
         if(piece.getAliance() != piece2.getAliance()){
@@ -170,5 +234,18 @@ public class BoardUtil {
         else{
             return false;
         }
+    }
+    public boolean isCheck(int columnPos,int rowPos){
+        this.RequestCandidate(columnPos,rowPos);
+        for(int i=0;i<columnPosList.size();i++){
+            int colPos = columnPosList.get(i);
+            int rPos = rowPosList.get(i);
+            if(tile[colPos][rPos].isOccupied()){
+                if(tile[colPos][rPos].getPiece().getPieceName().charAt(1) =='K'){
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }

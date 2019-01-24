@@ -42,35 +42,41 @@ public class PawnMovingStr implements MovingStrategy {
             }
         }
     }
-    public void Move(int columnPos,int rowPos){
-        CheckAliance(columnPos,rowPos);
+    public void AttackingMove(int columnPos,int rowPos) {
         Tile tile = board.getTile()[columnPos][rowPos];
-        for(int i=0;i<4;i++){
+        for (int i = 0; i < 2; i++) {
             canColumnPos = PawnMove[i][0] + columnPos;
             canRowPos = PawnMove[i][1] + rowPos;
-            if(boardUtil.isValidMove(canColumnPos,canRowPos)){
-                System.out.println(canColumnPos);
-                System.out.println(canRowPos);
+            if (boardUtil.isValidMove(canColumnPos, canRowPos)) {
                 Tile canTile = board.getTile()[canColumnPos][canRowPos];
-                if(i==0 || i==1){
-                    if((canTile.isOccupied()) && (boardUtil.isEnemy(canTile.getPiece(),tile.getPiece()))) {
-                       position.setPosition(canColumnPos,canRowPos);
+                if (boardUtil.isPawnMove()) {
+                    position.setPosition(canColumnPos, canRowPos);
+                } else {
+                    if ((canTile.isOccupied()) && (boardUtil.isEnemy(canTile.getPiece(), tile.getPiece()))) {
+                        position.setPosition(canColumnPos, canRowPos);
                     }
-                    else{
-                        continue;
-                        }
-                    }
+                }
+            }
+
+        }
+    }
+
+
+    public void CommonMove(int columnPos,int rowPos){
+        Tile tile = board.getTile()[columnPos][rowPos];
+        for(int i=2;i<4;i++){
+            canColumnPos = PawnMove[i][0] + columnPos;
+            canRowPos = PawnMove[i][1] + rowPos;
+            if(boardUtil.isValidMove(canColumnPos,canRowPos)) {
+                Tile canTile = board.getTile()[canColumnPos][canRowPos];
+                if(canTile.isOccupied()){
+                    continue;
+                }
                 else if(i==2){
-                    System.out.println("일로옴");
-                    if(canTile.isOccupied()){
-                        continue;
-                    }
-                    else{
-                        position.setPosition(canColumnPos,canRowPos);
-                    }
-                    }
+                    position.setPosition(canColumnPos,canRowPos);
+                }
                 else{
-                    System.out.println("여기옴");
+                    //commonMove
                     if(tile.getPiece().getFirstMove()){
                         position.setPosition(canColumnPos,canRowPos);
                     }
@@ -80,5 +86,17 @@ public class PawnMovingStr implements MovingStrategy {
                 }
             }
         }
+
     }
-}
+    public void Move(int columnPos,int rowPos){
+        CheckAliance(columnPos,rowPos);
+        if(boardUtil.isPawnMove()){
+            AttackingMove(columnPos,rowPos);
+        }
+        else {
+            AttackingMove(columnPos,rowPos);
+            CommonMove(columnPos, rowPos);
+        }
+        }
+    }
+

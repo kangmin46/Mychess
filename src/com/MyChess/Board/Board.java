@@ -1,9 +1,5 @@
 package com.MyChess.Board;
 
-
-
-import java.util.HashMap;
-import java.util.Map;
 import com.MyChess.Piece.*;
 
 import static com.MyChess.Board.Aliance.B;
@@ -15,30 +11,22 @@ public class Board {
     private Tile[][] tile = new Tile[8][8];
     private Board() {
         System.out.println("Board생성");
-        CreateEmptyTile();
-        CreateHeroPiece();
-        CreatePawnPiece();
-            for (int i = 0; i < 8; i++) {
-                for (int j = 0; j < 8; j++) {
-                    if(tile[i][j].isOccupied()) {
-                        System.out.print(tile[i][j].getTileOnPiece().getPieceName()+" ");
-                    }
-                    else{
-                        System.out.print(tile[i][j].getEmptyTIle()+" ");
-                    }
-                }
-                System.out.println();
-            }
+        new Player("W",true);
+        CreateEmptyTile(tile);
+        CreateHeroPiece(tile);
+        CreatePawnPiece(tile);
+
+
     }
 
-    public void CreateEmptyTile() {
+    public void CreateEmptyTile(Tile tile[][]) {
         for(int j=0;j<8;j++) {
             for (int i = 0; i < 8; i++) {
                 tile[j][i] = new Tile(j,i);
             }
         }
     }
-    public void CreateHeroPiece(){
+    public void CreateHeroPiece(Tile tile[][]){
 
         tile[0][0].setTileOnPiece(new Rook(0,0,B,"R"));
         tile[0][7].setTileOnPiece( new Rook(0,7,B,"R"));
@@ -63,7 +51,7 @@ public class Board {
             tile[7][i].setOccupied(true);}
         //W
     }
-    public void CreatePawnPiece(){
+    public void CreatePawnPiece(Tile tile[][]){
         for(int i = 0; i<8; i++){
             tile[1][i].setTileOnPiece(new Pawn(1,i,B,"P"));
             tile[1][i].setOccupied(true);

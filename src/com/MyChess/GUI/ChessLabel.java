@@ -1,9 +1,6 @@
 package com.MyChess.GUI;
 
-import com.MyChess.Board.Board;
-import com.MyChess.Board.BoardUtil;
-import com.MyChess.Board.Position;
-import com.MyChess.Board.Tile;
+import com.MyChess.Board.*;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
@@ -12,12 +9,14 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
+import static com.MyChess.Board.BoardUtil.getBoardUtil;
+
 public class ChessLabel extends JLabel {
 
     private int rowPos;
     private int columnPos;
 
-    BoardUtil boardUtil = BoardUtil.getBoardUtil();
+    BoardUtil boardUtil = getBoardUtil();
 
 
     public ChessLabel(int columnPos,int rowPos){
@@ -28,6 +27,7 @@ public class ChessLabel extends JLabel {
             @Override
             public void mouseClicked(MouseEvent e)   {
                 Board board = Board.getBoard();
+
                 if (boardUtil.isPieceClicked()) {
                     if(board.getTile()[columnPos][rowPos].isCandidateTile()){
                             boardUtil.ActiveMove(columnPos, rowPos);

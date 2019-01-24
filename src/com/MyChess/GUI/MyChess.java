@@ -1,12 +1,14 @@
 package com.MyChess.GUI;
 
 import com.MyChess.Board.Board;
+import com.MyChess.Board.VirtualBoard;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import java.awt.*;
 
 import static com.MyChess.Board.Board.getBoard;
+import static com.MyChess.Board.VirtualBoard.getVirtualBoard;
 
 public class MyChess extends JFrame {
 
@@ -18,6 +20,7 @@ public class MyChess extends JFrame {
         jframe.setSize(800,800);
         JPanel jPanel = new JPanel();
         Board board = getBoard();
+        VirtualBoard virtualboard = getVirtualBoard();
 
 
         try {

@@ -9,11 +9,41 @@ public class Tile {
 
     int rowPos;
     int columnPos;
-    private boolean isOccupied = false;
-    private boolean candidateTile = false;
+    private boolean isOccupied;
+    private boolean candidateTile;
     private Piece tileOnPiece;
+    private boolean wTemMove;
+    private boolean bTemMove;
     String emptyTIle = "*";
     Color tileColor;
+
+    public Tile(int columnPos,int rowPos){
+        this.rowPos = rowPos;
+        this.columnPos = columnPos;
+        this.isOccupied =false;
+        this.candidateTile =false;
+        this.wTemMove =false;
+        this.bTemMove =false;
+    }
+
+
+    public void setwTemMove(boolean wTemMove) {
+        this.wTemMove = wTemMove;
+    }
+
+    public void setbTemMove(boolean bTemMove) {
+        this.bTemMove = bTemMove;
+    }
+
+    public boolean iswTemMove() {
+        return wTemMove;
+    }
+
+    public boolean isbTemMove() {
+        return bTemMove;
+    }
+
+
 
     public void setCandidateTile(boolean candidateTile) {
         this.candidateTile = candidateTile;
@@ -55,10 +85,6 @@ public class Tile {
         return emptyTIle;
     }
 
-    public Tile(int columnPos,int rowPos){
-        this.rowPos = rowPos;
-        this.columnPos = columnPos;
-    }
 
 
     public void setOccupied(boolean isOccupied){
