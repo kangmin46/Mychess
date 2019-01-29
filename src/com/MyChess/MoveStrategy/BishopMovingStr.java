@@ -11,9 +11,8 @@ import static com.MyChess.Board.Position.getPosition;
 
 public class BishopMovingStr implements MovingStrategy{
 
-    private int columnCandidate;
-    private int rowCandidate;
-    private Position position;
+    private int canColumnPos;
+    private int canRowPos;
     private static Board board;
     private BoardUtil boardUtil;
     private boolean isJump = false;
@@ -24,28 +23,27 @@ public class BishopMovingStr implements MovingStrategy{
     public BishopMovingStr(){
         this.board = getBoard();
         this.boardUtil = getBoardUtil();
-        this.position = getPosition();
     }
 
-    public void Move(int columnPos,int rowPos){
-
+    public void Move(Board board,int columnPos,int rowPos){
+        System.out.println("BishopMove!!");
         Tile tile = board.getTile()[columnPos][rowPos];
         for(int j=0;j<4;j++) {
             for (int i = 0; i < 7; i++) {
-                columnCandidate = columnPos + bishopMove[j][i][0];
-                rowCandidate = rowPos + bishopMove[j][i][1];
-                if(!boardUtil.isValidMove(columnCandidate,rowCandidate)){
+                canColumnPos = columnPos + bishopMove[j][i][0];
+                canRowPos = rowPos + bishopMove[j][i][1];
+                if(!boardUtil.isValidMove(canColumnPos,canRowPos)){
                     continue;
                 };
-                Tile canTile = board.getTile()[columnCandidate][rowCandidate];
+                Tile canTile = board.getTile()[canColumnPos][canRowPos];
                if(canTile.isOccupied()){
                     if(boardUtil.isEnemy(tile.getPiece(),canTile.getPiece())){
-                        position.setPosition(columnCandidate,rowCandidate);
+                        boardUtil.saveCandidate(columnPos,rowPos,canColumnPos,canRowPos);
                     }
                     break;
                 }
                 else{
-                    position.setPosition(columnCandidate,rowCandidate);
+                   boardUtil.saveCandidate(columnPos,rowPos,canColumnPos,canRowPos);
                 }
             }
         }

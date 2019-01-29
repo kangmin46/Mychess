@@ -9,13 +9,11 @@ import static com.MyChess.Board.Aliance.W;
 public class Board {
     private static Board board;
     private Tile[][] tile = new Tile[8][8];
-    private Board() {
-        System.out.println("Board생성");
-        new Player("W",true);
+    protected Board() {
+
         CreateEmptyTile(tile);
         CreateHeroPiece(tile);
         CreatePawnPiece(tile);
-
 
     }
 
@@ -70,6 +68,18 @@ public class Board {
 
     public Tile[][] getTile() {
         return tile;
+    }
+    public void printBoard(){
+
+        for (int j = 0; j < 8; j++) {
+            for (int i = 0; i < 8; i++) {
+                if(tile[j][i].getPiece().getPieceName().charAt(1)=='P') {
+                    System.out.println(tile[j][i].getPiece().getFirstMove());
+                }
+            }
+            System.out.println();
+        }
+
     }
 
 }

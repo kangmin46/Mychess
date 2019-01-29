@@ -31,6 +31,8 @@ public class ChessLabel extends JLabel {
                 if (boardUtil.isPieceClicked()) {
                     if(board.getTile()[columnPos][rowPos].isCandidateTile()){
                             boardUtil.ActiveMove(columnPos, rowPos);
+                        System.out.println("---------ActiveMove ---------------");
+
                     }
                     else{
                         if(board.getTile()[columnPos][rowPos].isOccupied()) {

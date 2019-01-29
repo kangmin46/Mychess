@@ -12,12 +12,10 @@ import static com.MyChess.Board.Position.getPosition;
 
 public class QueenMovingStr implements MovingStrategy {
 
-    private int columnCandidate;
-    private int rowCandidate;
-    private Position position;
+    private int canColumnPos;
+    private int canRowPos;
     private static Board board;
     private BoardUtil boardUtil;
-    private boolean isJump = false;
     private static final int[][][] queenMove = {{{1, 1}, {2, 2}, {3, 3}, {4, 4}, {5, 5}, {6, 6}, {7, 7}},
             {{-1, 1}, {-2, 2}, {-3, 3}, {-4, 4}, {-5, 5}, {-6, 6}, {-7, 7}},
             {{1, -1}, {2, -2}, {3, -3}, {4, -4}, {5, -5}, {6, -6}, {7, -7}},
@@ -26,30 +24,31 @@ public class QueenMovingStr implements MovingStrategy {
             {{0,-1},{0,-2},{0,-3},{0,-4},{0,-5},{0,-6},{0,-7}},
             {{1,0},{2,0},{3,0},{4,0},{5,0},{6,0},{7,0}},
             {{-1,0},{-2,0},{-3,0},{-4,0},{-5,0},{-6,0},{-7,0}}};
+
     public QueenMovingStr(){
         this.board = getBoard();
         boardUtil = getBoardUtil();
-        position = getPosition();
     }
 
-    public void Move(int columnPos,int rowPos){
+    public void Move(Board board,int columnPos,int rowPos){
+        System.out.println("Queen Move!");
         Tile tile = board.getTile()[columnPos][rowPos];
         for(int j=0;j<8;j++) {
             for (int i = 0; i < 7; i++) {
-                columnCandidate = columnPos + queenMove[j][i][0];
-                rowCandidate = rowPos + queenMove[j][i][1];
-                if(!boardUtil.isValidMove(columnCandidate,rowCandidate)){
+                canColumnPos = columnPos + queenMove[j][i][0];
+                canRowPos = rowPos + queenMove[j][i][1];
+                if(!boardUtil.isValidMove(canColumnPos,canRowPos)){
                     continue;
                 }
-                Tile canTile = board.getTile()[columnCandidate][rowCandidate];
+                Tile canTile = board.getTile()[canColumnPos][canRowPos];
                 if(canTile.isOccupied()){
                     if(boardUtil.isEnemy(tile.getPiece(),canTile.getPiece())){
-                        position.setPosition(columnCandidate,rowCandidate);
+                        boardUtil.saveCandidate(columnPos,rowPos,canColumnPos,canRowPos);
                     }
                         break;
                 }
                 else{
-                    position.setPosition(columnCandidate,rowCandidate);
+                    boardUtil.saveCandidate(columnPos,rowPos,canColumnPos,canRowPos);
                 }
             }
         }

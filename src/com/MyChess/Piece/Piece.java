@@ -34,6 +34,10 @@ public abstract class Piece {
 
     }
 
+    public void setPieceName(String pieceName) {
+        this.pieceName = pieceName;
+    }
+
     public String getPieceName() {
         return pieceName;
     }
