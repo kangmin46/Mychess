@@ -8,11 +8,6 @@ import static com.MyChess.Board.Position.getPosition;
 
 public class Pawn extends Piece {
 
-    protected boolean firstMove = true;
-
-    public void setFirstMove(boolean firstMove) {
-        this.firstMove = firstMove;
-    }
 
     public Pawn(int columnPos,int rowPos, Aliance aliance,String pieceName){
 

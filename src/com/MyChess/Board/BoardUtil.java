@@ -9,6 +9,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.List;
 
+import static com.MyChess.Board.Board.getBoard;
 import static com.MyChess.Board.VirtualBoard.getVirtualBoard;
 import static com.MyChess.GUI.MyChess.jlabel;
 
@@ -26,7 +27,10 @@ public class BoardUtil {
     private JLabel presentLabel;
     private Tile pastTile;
     private Tile presentTile;
+    private JLabel pastRookLabel;
+    private JLabel presentRookLabel;
     boolean isPieceClicked = false;
+    private boolean isCheckState = false;
     private Board board;
     private Tile[][] tile;
 
@@ -66,7 +70,11 @@ public class BoardUtil {
         this.movingStrategy = movingStrategy;
     }
 
-    public void RequestCandidate(Board board,int columnPosition, int rowPosition,boolean isFirstRequest){
+    public boolean isFirstRequest() {
+        return isFirstRequest;
+    }
+
+    public void RequestCandidate(Board board, int columnPosition, int rowPosition, boolean isFirstRequest){
 
         String pieceName = board.getTile()[columnPosition][rowPosition].getTileOnPiece().getPieceName();
         this.isFirstRequest = isFirstRequest;
@@ -92,11 +100,11 @@ public class BoardUtil {
         }
         if(isFirstRequest){
             movingStrategy.Move(board,columnPosition,rowPosition);
-            System.out.println("Board 인자로 move");
+
         }
         else{
             movingStrategy.Move(virtualBoard,columnPosition,rowPosition);
-            System.out.println("virtualBoard인자로 Move");
+
         }
     }
 
@@ -175,7 +183,7 @@ public class BoardUtil {
     }
 
     public void settingTemMove(Board board){
-        int L=0;
+
         this.InitializeTemMove(board);
         for(int j=0;j<8;j++){
             for(int i=0;i<8;i++){
@@ -185,48 +193,103 @@ public class BoardUtil {
                     if(tile[j][i].getPiece().getPieceName().charAt(0)=='W') {
                         for (int k = 0; k < virtualColumnPos.size(); k++) {
                             tile[virtualColumnPos.get(k)][virtualRowPos.get(k)].setwTemMove(true);
-                         //   System.out.println(virtualColumnPos.get(k)+" / "+virtualRowPos.get(k)+": white ->True");
                         }
                     }
                     else{
                         for (int k = 0; k < virtualColumnPos.size(); k++) {
                             tile[virtualColumnPos.get(k)][virtualRowPos.get(k)].setbTemMove(true);
-                            System.out.println(virtualColumnPos.get(k)+" / "+virtualRowPos.get(k)+": Black ->True");
                     }
                     }
                 }
                 this.ClearList();
-                L++;
             }
         }
         this.isFirstRequest =true;
-        System.out.println("SettingMove 끝");
+
+    }
+
+    public void DeleteFirstMove(int columnPos,int rowPos){
+
+        char pieceName = getBoard().getTile()[columnPos][rowPos].getPiece().getPieceName().charAt(1);
+        Piece piece = getBoard().getTile()[columnPos][rowPos].getPiece();
+        if(pieceName=='P'||pieceName=='K'||pieceName=='R'){
+            piece.setFirstMove(false);
+            virtualBoard.getTile()[columnPos][rowPos].getPiece().setFirstMove(false);
+        }
+    }
+    public boolean isCastlingMove(Tile pastTile,Tile presentTile){
+        if(pastTile.getPiece().isFirstMove()){
+            if(presentTile.getRowPos()==6 || presentTile.getRowPos()==2) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void CastlingRookMove(int pastColumnPos,int pastRowPos, int columnPos,int rowPos ){
+
+        pastRookLabel = jlabel[pastColumnPos][pastRowPos];
+        presentRookLabel = jlabel[columnPos][rowPos];
+        Tile presentRookTile= board.getTile()[columnPos][rowPos];
+        Tile pastRookTile= board.getTile()[pastColumnPos][pastRowPos];
+
+        Icon icon = pastRookLabel.getIcon();
+        pastRookLabel.setIcon(null);
+        pastRookTile.setOccupied(false);
+        presentRookTile.setPiece(pastRookTile.getPiece());
+        presentRookTile.getPiece().setFirstMove(false);
+
+
+        presentRookLabel.setIcon(icon);
+        presentRookLabel.setHorizontalAlignment(JLabel.CENTER);
+
+        presentRookTile.getPiece().setcolumnPos(columnPos);
+        presentRookTile.getPiece().setrowPos(rowPos);
+
+        pastRookTile.removePiece();
+
+    }
+
+    public void ActiveCastlingMove(int columnPos,int rowPos){
+        Tile presentTile = board.getTile()[columnPos][rowPos];
+
+        if(presentTile.getRowPos() == 6){
+            CastlingRookMove(columnPos,7,columnPos,5);
+            this.VirtualActiveMove(columnPos,7,columnPos,5);
+        }
+        else{
+            CastlingRookMove(columnPos,0,columnPos,3);
+            this.VirtualActiveMove(columnPos,0,columnPos,3);
+        }
     }
 
     public void ActiveMove(int columnPos,int rowPos){
 
         this.setTileLabel(selectedPiece[0],selectedPiece[1],columnPos,rowPos);
-            Icon icon = pastLabel.getIcon();
-            pastLabel.setIcon(null);
-            presentTile.removePiece();
-            presentLabel.setIcon(null);
-            if(pastTile.getPiece().getPieceName().equals("BP")||
-                        pastTile.getPiece().getPieceName().equals("WP")){
-                    ((Pawn)pastTile.getPiece()).setFirstMove(false);
-                    virtualBoard.getTile()[selectedPiece[0]][selectedPiece[1]].getPiece().setFirstMove(false);
-                }
-            presentTile.setTileOnPiece(pastTile.getTileOnPiece());
-            presentLabel.setIcon(icon);
-            presentLabel.setHorizontalAlignment(JLabel.CENTER);
-            presentTile.setOccupied(true);
-            presentTile.getPiece().setcolumnPos(columnPos);
-            presentTile.getPiece().setrowPos(rowPos);
-            pastTile.setOccupied(false);
-            this.isPieceClicked = false;
-            pastTile.removePiece();
+        Icon icon = pastLabel.getIcon();
+            if(pastTile.getPiece().getPieceName().charAt(1)=='K'&& (isCastlingMove(pastTile,presentTile))) {
+                System.out.println("!!!!!!!!!!!!!!!!!ActiveCastlingMove!!!!!!!!!!");
+                ActiveCastlingMove(columnPos,rowPos);
+                //Active CastlingMove
+            }
+                pastLabel.setIcon(null);
+                presentTile.removePiece();
+                presentLabel.setIcon(icon);
+                DeleteFirstMove(selectedPiece[0],selectedPiece[1]);
+                presentTile.setTileOnPiece(pastTile.getTileOnPiece());
+                presentLabel.setIcon(icon);
+                presentLabel.setHorizontalAlignment(JLabel.CENTER);
+                presentTile.setOccupied(true);
+                presentTile.getPiece().setcolumnPos(columnPos);
+                presentTile.getPiece().setrowPos(rowPos);
+
+                pastTile.setOccupied(false);
+                this.isPieceClicked = false;
+                pastTile.removePiece();
+
+                this.VirtualActiveMove(selectedPiece[0],selectedPiece[1],columnPos,rowPos);
+
             this.ClearTile();
-        System.out.println("---Active하고 Setting TemMove 시작 -- ");
-            this.VirtualActiveMove(selectedPiece[0],selectedPiece[1],columnPos,rowPos);
             this.settingTemMove(virtualBoard);
             this.Check(columnPos,rowPos);
             virtualBoard.printBoard();
@@ -245,10 +308,28 @@ public class BoardUtil {
         pastTile.removePiece();
 
     }
-    public void Check(int columnPos,int rowPos){
+
+    public boolean isCheckState() {
+        return isCheckState;
+    }
+
+    public boolean isWhiteAliance(Board board,int columnPos,int rowPos) {
+        Tile tile = board.getTile()[columnPos][rowPos];
+        if (tile.getPiece().getAliance() == Aliance.W) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void Check(int columnPos, int rowPos){
         if(this.isCheck(columnPos,rowPos)){
             System.out.println("!!!!!Check Event !!!!");
+            this.isCheckState = true;
+
         }
+        this.isCheckState = false;
+
     }
     public boolean isEnemy(Piece piece ,Piece piece2 ){
         if(piece.getAliance() != piece2.getAliance()){
@@ -299,7 +380,7 @@ public class BoardUtil {
         return kingTile;
     }
     public boolean isCheck(int columnPos,int rowPos){
-        System.out.println("isCheck");
+
         RequestCandidate(virtualBoard,columnPos,rowPos,false);
         for(int i=0;i<virtualColumnPos.size();i++){
             int colPos = virtualColumnPos.get(i);
@@ -324,7 +405,6 @@ public class BoardUtil {
         }
         else{
             position.setVirtualPosition(canColumnPos,canRowPos);
-            System.out.println("VirtualPositon 저장!!");
         }
 
     }

@@ -31,7 +31,7 @@ public class QueenMovingStr implements MovingStrategy {
     }
 
     public void Move(Board board,int columnPos,int rowPos){
-        System.out.println("Queen Move!");
+
         Tile tile = board.getTile()[columnPos][rowPos];
         for(int j=0;j<8;j++) {
             for (int i = 0; i < 7; i++) {

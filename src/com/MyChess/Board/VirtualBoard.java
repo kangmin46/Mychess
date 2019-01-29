@@ -47,7 +47,6 @@ public class VirtualBoard extends Board {
     public static boolean isVirtualMove(int columnPos,int rowPos,int canColumnPos,int canRowPos){
 
         //VirtualMove 구현
-        System.out.println("isVirtualMove 호출");
         Tile tile =virtualBoard.getTile()[columnPos][rowPos];
         Tile Cantile = virtualBoard.getTile()[canColumnPos][canRowPos];
         boolean isVirtualMove=true;
@@ -90,7 +89,6 @@ public class VirtualBoard extends Board {
             Cantile.setOccupied(false);
         }
         virtualBoard.printBoard();
-        System.out.println("isVirtualMove 끝");
         return isVirtualMove;
     }
 }

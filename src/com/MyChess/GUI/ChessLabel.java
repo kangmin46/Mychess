@@ -39,20 +39,10 @@ public class ChessLabel extends JLabel {
                                 player.setWhiteTurn(true);
                             }
                         System.out.println("---------ActiveMove ---------------");
-
                     }
                     else{
                         if(tile.isOccupied()) {
-                            if(tile.getPiece().getAliance()==Aliance.W){
-                                if(player.isWhiteTurn()) {
-                                    boardUtil.ShowCandidateTile(columnPos, rowPos);
-                                }
-                            }
-                            else{
-                                if(!player.isWhiteTurn()){
-                                    boardUtil.ShowCandidateTile(columnPos, rowPos);
-                                }
-                            }
+                            JudgeTurn(columnPos,rowPos);
                         }
                         else {
                            boardUtil.ClearTile();
@@ -61,20 +51,26 @@ public class ChessLabel extends JLabel {
                 }
                 else{
                     if(tile.isOccupied()) {
-                        if(tile.getPiece().getAliance()==Aliance.W){
-                            if(player.isWhiteTurn()) {
-                                boardUtil.ShowCandidateTile(columnPos, rowPos);
-                            }
-                        }
-                        else{
-                            if(!player.isWhiteTurn()){
-                                boardUtil.ShowCandidateTile(columnPos, rowPos);
-                            }
-                        }
-
+                        JudgeTurn(columnPos,rowPos);
                     }
                 }
             }
         });
+    }
+    public void JudgeTurn(int columnPos,int rowPos){
+        Board board = Board.getBoard();
+        Tile tile = board.getTile()[columnPos][rowPos];
+        Player player =Player.getPlayer();
+        if(tile.getPiece().getAliance()==Aliance.W){
+            if(player.isWhiteTurn()) {
+                boardUtil.ShowCandidateTile(columnPos, rowPos);
+            }
+        }
+        else{
+            if(!player.isWhiteTurn()){
+                boardUtil.ShowCandidateTile(columnPos, rowPos);
+            }
+        }
+
     }
 }

@@ -13,6 +13,7 @@ public abstract class Piece {
     protected int columnPos;
     private Aliance aliance;
     protected boolean isJump = false;
+    protected boolean firstMove=true;
     private MovingStrategy movingStrategy;
 
     public void setJump(boolean jump) {
@@ -55,10 +56,23 @@ public abstract class Piece {
     }
 
     public boolean getFirstMove(){
-        return ((Pawn)this).firstMove;
+        return this.firstMove;
+    }
+
+    public int getColumnPos() {
+        return columnPos;
+    }
+
+    public int getRowPos() {
+        return rowPos;
+    }
+
+    public boolean isFirstMove() {
+        return firstMove;
     }
 
     public void setFirstMove(boolean firstMove){
-        ((Pawn)this).firstMove = firstMove;
+
+        this.firstMove = firstMove;
     }
 }

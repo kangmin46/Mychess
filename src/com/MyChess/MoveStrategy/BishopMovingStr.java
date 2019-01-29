@@ -26,7 +26,7 @@ public class BishopMovingStr implements MovingStrategy{
     }
 
     public void Move(Board board,int columnPos,int rowPos){
-        System.out.println("BishopMove!!");
+
         Tile tile = board.getTile()[columnPos][rowPos];
         for(int j=0;j<4;j++) {
             for (int i = 0; i < 7; i++) {
