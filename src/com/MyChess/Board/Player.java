@@ -2,29 +2,35 @@ package com.MyChess.Board;
 
 public class Player {
 
-    private final String playerColor;
-    private boolean isTurn;
-    private Player player;
+
+    private boolean isWhiteTurn;
+
+    public void setWhiteTurn(boolean whiteTurn) {
+        isWhiteTurn = whiteTurn;
+    }
+
+    private static Player player;
 
     public void setTurn(boolean turn) {
-        isTurn = turn;
+        isWhiteTurn = turn;
     }
 
-    public String getPlayerColor() {
-        return playerColor;
+
+    public boolean isWhiteTurn() {
+        return isWhiteTurn;
     }
 
-    public boolean isTurn() {
-        return isTurn;
-    }
+    Player (boolean isWhiteTurn){
 
-    Player(String playerColor, boolean isTurn){
-        this.playerColor = playerColor;
-        this.isTurn =isTurn;
+        this.isWhiteTurn =isWhiteTurn;
         player=this;
     }
 
-    public Player getPlayer() {
+    public static Player getPlayer() {
+        if ( player==null ){
+
+            player=new Player(true);
+        }
         return player;
     }
 }

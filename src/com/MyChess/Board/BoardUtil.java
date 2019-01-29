@@ -169,23 +169,6 @@ public class BoardUtil {
     }
 
 
-    public void deleteTemMove(Tile presentTile,int columnPos,int rowPos){
-        this.RequestCandidate(virtualBoard,columnPos,rowPos,false);
-            if (presentTile.getPiece().getPieceName().charAt(0) == 'W') {
-                for (int i = 0; i < columnPosList.size(); i++) {
-                    tile[columnPosList.get(i)][rowPosList.get(i)].setwTemMove(false);
-                }
-            } else {
-                for (int i = 0; i < columnPosList.size(); i++) {
-                    tile[columnPosList.get(i)][rowPosList.get(i)].setbTemMove(false);
-                }
-            }
-    }
-
-    public boolean isPawnMove() {
-        return isPawnMove;
-    }
-
     public void ClearList(){
         virtualColumnPos.clear();
         virtualRowPos.clear();
@@ -223,10 +206,6 @@ public class BoardUtil {
     public void ActiveMove(int columnPos,int rowPos){
 
         this.setTileLabel(selectedPiece[0],selectedPiece[1],columnPos,rowPos);
-        //deleteTemMove(pastTile,selectedPiece[0],selectedPiece[1]);
-        /*if(presentTile.isOccupied()){
-            deleteTemMove(presentTile,columnPos,rowPos);
-        }*/
             Icon icon = pastLabel.getIcon();
             pastLabel.setIcon(null);
             presentTile.removePiece();
@@ -321,9 +300,10 @@ public class BoardUtil {
     }
     public boolean isCheck(int columnPos,int rowPos){
         System.out.println("isCheck");
-        for(int i=0;i<columnPosList.size();i++){
-            int colPos = columnPosList.get(i);
-            int rPos = rowPosList.get(i);
+        RequestCandidate(virtualBoard,columnPos,rowPos,false);
+        for(int i=0;i<virtualColumnPos.size();i++){
+            int colPos = virtualColumnPos.get(i);
+            int rPos = virtualRowPos.get(i);
             if(tile[colPos][rPos].isOccupied()){
                 if(tile[colPos][rPos].getPiece().getPieceName().charAt(1) =='K'){
                     return true;

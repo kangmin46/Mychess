@@ -27,16 +27,32 @@ public class ChessLabel extends JLabel {
             @Override
             public void mouseClicked(MouseEvent e)   {
                 Board board = Board.getBoard();
-
+                Tile tile = board.getTile()[columnPos][rowPos];
+                Player player =Player.getPlayer();
                 if (boardUtil.isPieceClicked()) {
-                    if(board.getTile()[columnPos][rowPos].isCandidateTile()){
+                    if(tile.isCandidateTile()){
                             boardUtil.ActiveMove(columnPos, rowPos);
+                            if(player.isWhiteTurn()){
+                                player.setWhiteTurn(false);
+                            }
+                            else{
+                                player.setWhiteTurn(true);
+                            }
                         System.out.println("---------ActiveMove ---------------");
 
                     }
                     else{
-                        if(board.getTile()[columnPos][rowPos].isOccupied()) {
-                            boardUtil.ShowCandidateTile(columnPos, rowPos);
+                        if(tile.isOccupied()) {
+                            if(tile.getPiece().getAliance()==Aliance.W){
+                                if(player.isWhiteTurn()) {
+                                    boardUtil.ShowCandidateTile(columnPos, rowPos);
+                                }
+                            }
+                            else{
+                                if(!player.isWhiteTurn()){
+                                    boardUtil.ShowCandidateTile(columnPos, rowPos);
+                                }
+                            }
                         }
                         else {
                            boardUtil.ClearTile();
@@ -44,8 +60,18 @@ public class ChessLabel extends JLabel {
                     }
                 }
                 else{
-                    if(board.getTile()[columnPos][rowPos].isOccupied()) {
-                        boardUtil.ShowCandidateTile(columnPos, rowPos);
+                    if(tile.isOccupied()) {
+                        if(tile.getPiece().getAliance()==Aliance.W){
+                            if(player.isWhiteTurn()) {
+                                boardUtil.ShowCandidateTile(columnPos, rowPos);
+                            }
+                        }
+                        else{
+                            if(!player.isWhiteTurn()){
+                                boardUtil.ShowCandidateTile(columnPos, rowPos);
+                            }
+                        }
+
                     }
                 }
             }
