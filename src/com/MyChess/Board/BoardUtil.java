@@ -216,6 +216,7 @@ public class BoardUtil {
                 L++;
             }
         }
+        this.isFirstRequest =true;
         System.out.println("SettingMove 끝");
     }
 
@@ -233,6 +234,7 @@ public class BoardUtil {
             if(pastTile.getPiece().getPieceName().equals("BP")||
                         pastTile.getPiece().getPieceName().equals("WP")){
                     ((Pawn)pastTile.getPiece()).setFirstMove(false);
+                    virtualBoard.getTile()[selectedPiece[0]][selectedPiece[1]].getPiece().setFirstMove(false);
                 }
             presentTile.setTileOnPiece(pastTile.getTileOnPiece());
             presentLabel.setIcon(icon);
