@@ -150,47 +150,33 @@ public class BoardUtil {
         isFirstRequest = firstRequest;
     }
 
-    public boolean isCheckMate(Aliance aliance){
+    public boolean isCheckMate(int columnPos,int rowPos){
         this.isShow =false;
         int checkMateCount = 0;
 
         for(int i =0;i<8;i++){
             for(int j=0;j<8;j++){
                 Tile tile =board.getTile()[i][j];
-                if(aliance==Aliance.W){ //검은색을 판단
+                if(board.getTile()[columnPos][rowPos].getPiece().getAliance()==Aliance.W){ //검은색을 판단
                     if(tile.isOccupied()&&tile.getPiece().getAliance()==Aliance.B) {
                         ShowCandidateTile(i,j);
-                        System.out.println(rowPosList.size());
                         checkMateCount = checkMateCount+rowPosList.size();
                     }
                 }
                 else{
                     if(tile.isOccupied()&&tile.getPiece().getAliance()==Aliance.W) {
                         ShowCandidateTile(i,j);
-                        System.out.println(rowPosList.size());
                         checkMateCount = checkMateCount+rowPosList.size();
                     }
                 }
 
                 }
             }
-        System.out.println("CheckamteCount = "+checkMateCount);
         if(checkMateCount == 0 ){
             return true;
         }
         return false;
         }
-
-
-
-
-    public void CheckMateEvent(Aliance aliance){
-
-        if(isCheckMate(aliance)){
-            System.out.println("@@@@@@@@@@CheckMate Event@@@@@@@@@");
-        }
-
-    }
 
     public void ShowCandidateTile(int columnPos, int rowPos){
 
@@ -313,7 +299,6 @@ public class BoardUtil {
         this.setTileLabel(selectedPiece[0],selectedPiece[1],columnPos,rowPos);
         Icon icon = pastLabel.getIcon();
             if(pastTile.getPiece().getPieceName().charAt(1)=='K'&& (isCastlingMove(pastTile,presentTile))) {
-                System.out.println("!!!!!!!!!!!!!!!!!ActiveCastlingMove!!!!!!!!!!");
                 ActiveCastlingMove(columnPos,rowPos);
                 //Active CastlingMove
             }
@@ -337,7 +322,6 @@ public class BoardUtil {
             this.ClearTile();
             this.settingTemMove(virtualBoard);
             this.Check(columnPos,rowPos);
-            this.CheckMateEvent(presentTile.getPiece().getAliance());
             this.isShow =true;
 
 
@@ -372,10 +356,17 @@ public class BoardUtil {
         if(this.isCheck(columnPos,rowPos)){
             System.out.println("!!!!!Check Event !!!!");
             this.isCheckState = true;
-
+            if(this.isCheckMate(columnPos,rowPos)){
+                System.out.println("@@@@@CheckMate Event@@@@@");
+            }
         }
-        this.isCheckState = false;
-
+        else if(this.isCheckMate(columnPos,rowPos)){
+            this.isCheckState = false;
+            System.out.println("######StaleMate Event@@@@@@@");
+        }
+        else{
+            this.isCheckState = false;
+        }
     }
     public boolean isEnemy(Piece piece ,Piece piece2 ){
         if(piece.getAliance() != piece2.getAliance()){
@@ -404,7 +395,7 @@ public class BoardUtil {
         return false;
     }
 
-    public Tile FindKing(VirtualBoard virtualBoard , char color){
+    public Tile FindKing(Board board , char color){
         String king;
         Tile kingTile =null;
         if(color =='W') {
@@ -415,9 +406,9 @@ public class BoardUtil {
         }
            Loop: for (int j = 0; j < 8; j++) {
                 for (int i = 0; i < 8; i++) {
-                    if(virtualBoard.getTile()[j][i].isOccupied()) {
-                        if (virtualBoard.getTile()[j][i].getPiece().getPieceName().equals(king)) {
-                            kingTile = virtualBoard.getTile()[j][i];
+                    if(board.getTile()[j][i].isOccupied()) {
+                        if (board.getTile()[j][i].getPiece().getPieceName().equals(king)) {
+                            kingTile = board.getTile()[j][i];
                             break Loop;
                         }
                     }
@@ -427,17 +418,26 @@ public class BoardUtil {
     }
     public boolean isCheck(int columnPos,int rowPos){
 
-        RequestCandidate(virtualBoard,columnPos,rowPos,false);
-        for(int i=0;i<virtualColumnPos.size();i++){
-            int colPos = virtualColumnPos.get(i);
-            int rPos = virtualRowPos.get(i);
-            if(tile[colPos][rPos].isOccupied()){
-                if(tile[colPos][rPos].getPiece().getPieceName().charAt(1) =='K'){
-                    return true;
-                }
+        settingTemMove(board);
+        Aliance aliance =board.getTile()[columnPos][rowPos].getPiece().getAliance();
+        if(aliance == Aliance.W){
+            Tile tile = this.FindKing(board,'B');
+            if(tile.iswTemMove()){
+                return true;
+            }
+            else{
+                return false;
             }
         }
-        return false;
+        else{
+            Tile tile =this.FindKing(board,'W');
+            if(tile.isbTemMove()){
+                return true;
+            }
+            else{
+                return false;
+            }
+        }
     }
 
     public void saveCandidate(int columnPos, int rowPos, int canColumnPos, int canRowPos){
