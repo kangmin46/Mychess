@@ -5,6 +5,7 @@ import com.MyChess.Piece.Knight;
 import com.MyChess.Piece.Pawn;
 import javax.swing.JOptionPane;
 import com.MyChess.Piece.Piece;
+import com.MyChess.Piece.Queen;
 
 import javax.swing.*;
 import java.awt.*;
@@ -324,7 +325,6 @@ public class BoardUtil {
     }
 
     public void ActiveMove(int columnPos,int rowPos){
-
         this.setTileLabel(selectedPiece[0],selectedPiece[1],columnPos,rowPos);
         Icon icon = pastLabel.getIcon();
             if(pastTile.getPiece().getPieceName().charAt(1)=='K'&& (isCastlingMove(pastTile,presentTile))) {
@@ -348,13 +348,55 @@ public class BoardUtil {
 
                 this.VirtualActiveMove(selectedPiece[0],selectedPiece[1],columnPos,rowPos);
 
-            this.ClearTile();
-            this.settingTemMove(virtualBoard);
-            this.Check(columnPos,rowPos);
-            this.isShow =true;
-
+                this.ClearTile();
+                this.settingTemMove(virtualBoard);
+        if(presentTile.getPiece().getPieceName().charAt(1)=='P'){
+            if (isPawnPromotion(columnPos, rowPos)) {
+                PromotionPawn(columnPos,rowPos);
+            }
+        }
+                this.Check(columnPos,rowPos);
+                this.isShow =true;
+                 board.printBoard();
 
     }
+    public boolean isPawnPromotion(int columnPos, int rowPos){
+        Aliance aliance = board.getTile()[columnPos][rowPos].getPiece().getAliance();
+        if(aliance == Aliance.B){
+            if(columnPos==7){
+                return true;
+            }
+        }
+        else{
+            if(columnPos==0){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void PromotionPawn(int columnPos, int rowPos){
+        Tile tile = board.getTile()[columnPos][rowPos];
+        Tile virtualTile =virtualBoard.getTile()[columnPos][rowPos];
+        Aliance aliance =tile.getPiece().getAliance();
+        JLabel label = jlabel[columnPos][rowPos];
+
+        ImageIcon icon = new ImageIcon("images/"+aliance+"Q.gif");
+        label.setIcon(icon);
+        label.setHorizontalAlignment(JLabel.CENTER);
+        SettingPromotionTile(tile);
+        SettingPromotionTile(virtualTile);
+    }
+
+    public void SettingPromotionTile(Tile tile){
+        Aliance aliance = tile.getPiece().getAliance();
+        tile.removePiece();
+        tile.setTileOnPiece(new Queen(tile.getColumnPos(),tile.getRowPos(),aliance,"Q"));
+        tile.getPiece().setcolumnPos(tile.getColumnPos());
+        tile.getPiece().setrowPos(tile.getRowPos());
+
+    }
+
     public void VirtualActiveMove(int pastCol,int pastRow,int columnPos,int rowPos){
 
         Tile pastTile= virtualBoard.getTile()[pastCol][pastRow];
@@ -453,9 +495,11 @@ public class BoardUtil {
         if(aliance == Aliance.W){
             Tile tile = this.FindKing(board,'B');
             if(tile.iswTemMove()){
+
                 return true;
             }
             else{
+
                 return false;
             }
         }
@@ -468,6 +512,7 @@ public class BoardUtil {
                 return false;
             }
         }
+
     }
 
     public void saveCandidate(int columnPos, int rowPos, int canColumnPos, int canRowPos){

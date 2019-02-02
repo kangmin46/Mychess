@@ -73,9 +73,13 @@ public class Board {
 
         for (int j = 0; j < 8; j++) {
             for (int i = 0; i < 8; i++) {
-                if(tile[j][i].getPiece().getPieceName().charAt(1)=='P') {
-                    System.out.println(tile[j][i].getPiece().getFirstMove());
+                if(tile[j][i].isOccupied()){
+                    System.out.print(tile[j][i].getPiece().getPieceName().charAt(1)+"  ");;
                 }
+                else{
+                    System.out.print("*  ");
+                }
+
             }
             System.out.println();
         }
