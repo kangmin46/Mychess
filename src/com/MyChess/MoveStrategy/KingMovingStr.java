@@ -2,11 +2,8 @@ package com.MyChess.MoveStrategy;
 
 import com.MyChess.Board.*;
 import com.MyChess.Piece.Piece;
-import com.MyChess.Piece.Queen;
-
-import static com.MyChess.Board.Board.getBoard;
 import static com.MyChess.Board.BoardUtil.getBoardUtil;
-import static com.MyChess.Board.Position.getPosition;
+
 
 public class KingMovingStr implements MovingStrategy {
 
@@ -39,13 +36,12 @@ public class KingMovingStr implements MovingStrategy {
 
     public void isJudgeValidCastling(Board board,Piece rookPiece){ //Castling을 판단하기위한 로직중 하나
 
-        System.out.println("isJudgeValidCastling!!");
+
         if(rookPiece.getRowPos()==0){
             this.isQueenSideCastling = isValidQueenSideCastling(board,rookPiece);
         }
         else{
            this.isKingSideCastling = isValidKingSideCastling(board,rookPiece);
-            //kingside
         }
     }
     public boolean isValidKingSideCastling(Board board,Piece rookPiece){
@@ -97,7 +93,7 @@ public class KingMovingStr implements MovingStrategy {
     }
 
     public void ShowCastlingTile(int columnPos,int rowPos){
-        System.out.println("ShowCastling!!");
+
         if(this.isQueenSideCastling){
             position.setPosition(columnPos,rowPos-2);
         }
@@ -109,7 +105,7 @@ public class KingMovingStr implements MovingStrategy {
 
 
     public void Move(Board board,int columnPos,int rowPos){
-        System.out.println("!!!!!!!!!!!!KIngMove!!!!!!!!!!");
+
         this.kingPiece =board.getTile()[columnPos][rowPos].getPiece();
         if(boardUtil.isFirstRequest()) {
             if (kingPiece.isFirstMove()) {

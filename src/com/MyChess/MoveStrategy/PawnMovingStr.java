@@ -67,7 +67,7 @@ public class PawnMovingStr implements MovingStrategy {
                     } else if (i == 2) {
                         boardUtil.saveCandidate(columnPos, rowPos, canColumnPos, canRowPos);
                     } else {
-                        System.out.println(tile.getPiece().getFirstMove());
+
                         if (tile.getPiece().getFirstMove()) {
                             boardUtil.saveCandidate(columnPos, rowPos, canColumnPos, canRowPos);
                         } else {

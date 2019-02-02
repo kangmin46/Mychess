@@ -33,6 +33,7 @@ public class BoardUtil {
     private boolean isCheckState = false;
     private Board board;
     private Tile[][] tile;
+    private boolean isShow = true;
 
     private boolean isPawnMove =true;
     private VirtualBoard virtualBoard;
@@ -149,8 +150,50 @@ public class BoardUtil {
         isFirstRequest = firstRequest;
     }
 
+    public boolean isCheckMate(Aliance aliance){
+        this.isShow =false;
+        int checkMateCount = 0;
+
+        for(int i =0;i<8;i++){
+            for(int j=0;j<8;j++){
+                Tile tile =board.getTile()[i][j];
+                if(aliance==Aliance.W){ //검은색을 판단
+                    if(tile.isOccupied()&&tile.getPiece().getAliance()==Aliance.B) {
+                        ShowCandidateTile(i,j);
+                        System.out.println(rowPosList.size());
+                        checkMateCount = checkMateCount+rowPosList.size();
+                    }
+                }
+                else{
+                    if(tile.isOccupied()&&tile.getPiece().getAliance()==Aliance.W) {
+                        ShowCandidateTile(i,j);
+                        System.out.println(rowPosList.size());
+                        checkMateCount = checkMateCount+rowPosList.size();
+                    }
+                }
+
+                }
+            }
+        System.out.println("CheckamteCount = "+checkMateCount);
+        if(checkMateCount == 0 ){
+            return true;
+        }
+        return false;
+        }
+
+
+
+
+    public void CheckMateEvent(Aliance aliance){
+
+        if(isCheckMate(aliance)){
+            System.out.println("@@@@@@@@@@CheckMate Event@@@@@@@@@");
+        }
+
+    }
+
     public void ShowCandidateTile(int columnPos, int rowPos){
-       
+
         this.setPieceClicked(true);
         this.SelectedPiece(columnPos,rowPos);
         this.setTileLabel(selectedPiece[0],selectedPiece[1],columnPos,rowPos);
@@ -159,12 +202,14 @@ public class BoardUtil {
         }
         this.isPawnMove=false;
         this.RequestCandidate(board,columnPos,rowPos,true);
-            for(int i=0;i<rowPosList.size();i++){
-                    jlabel[columnPosList.get(i)]
-                            [rowPosList.get(i)].setBackground(Color.orange);
-                    tile[columnPosList.get(i)]
-                            [rowPosList.get(i)].setCandidateTile(true);
+        if(isShow == true) {
+            for (int i = 0; i < rowPosList.size(); i++) {
+                jlabel[columnPosList.get(i)]
+                        [rowPosList.get(i)].setBackground(Color.orange);
+                tile[columnPosList.get(i)]
+                        [rowPosList.get(i)].setCandidateTile(true);
             }
+        }
             setFirstRequest(true);
     }
 
@@ -292,7 +337,8 @@ public class BoardUtil {
             this.ClearTile();
             this.settingTemMove(virtualBoard);
             this.Check(columnPos,rowPos);
-            virtualBoard.printBoard();
+            this.CheckMateEvent(presentTile.getPiece().getAliance());
+            this.isShow =true;
 
 
     }

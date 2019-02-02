@@ -88,7 +88,7 @@ public class VirtualBoard extends Board {
         else{
             Cantile.setOccupied(false);
         }
-        virtualBoard.printBoard();
+
         return isVirtualMove;
     }
 }
