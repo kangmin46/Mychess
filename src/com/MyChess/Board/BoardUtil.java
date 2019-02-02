@@ -3,6 +3,7 @@ package com.MyChess.Board;
 import com.MyChess.MoveStrategy.*;
 import com.MyChess.Piece.Knight;
 import com.MyChess.Piece.Pawn;
+import javax.swing.JOptionPane;
 import com.MyChess.Piece.Piece;
 
 import javax.swing.*;
@@ -12,6 +13,7 @@ import java.util.List;
 import static com.MyChess.Board.Board.getBoard;
 import static com.MyChess.Board.VirtualBoard.getVirtualBoard;
 import static com.MyChess.GUI.MyChess.jlabel;
+import static javax.swing.JFrame.isDefaultLookAndFeelDecorated;
 
 public class BoardUtil {
 
@@ -37,7 +39,6 @@ public class BoardUtil {
 
     private boolean isPawnMove =true;
     private VirtualBoard virtualBoard;
-    private Tile[][] virtualTile;
 
     public void setTileLabel(int pastCol,int pastRow,int preCol,int preRow ){
 
@@ -46,12 +47,6 @@ public class BoardUtil {
         this.pastTile = board.getTile()[pastCol][pastRow];
         this.presentTile = board.getTile()[preCol][preRow];
     }
-    /*public boolean isFutureMove(Piece piece, int futureCol,int futureRow){
-        //true 일때 오렌지색 표시
-        virtualBoard.getTile()[futureCol][futureRow]
-
-    }*/
-
     private static int[] selectedPiece = new int[2];
     private Color color;
 
@@ -59,7 +54,7 @@ public class BoardUtil {
         this.board = Board.getBoard();
         this.tile= board.getTile();
         this.virtualBoard = getVirtualBoard();
-        this.virtualTile =virtualBoard.getTile();
+
     }
 
 
@@ -178,8 +173,42 @@ public class BoardUtil {
         return false;
         }
 
-    public void ShowCandidateTile(int columnPos, int rowPos){
+        public void CheckMateEvent(Aliance aliance, boolean isCheckMate){
+        String msg;
+        if(aliance ==Aliance.B){
+            msg = "흑";
+        }
+        else {
+            msg = "백";
+        }
+            ImageIcon checkMateIcon = new ImageIcon("images/CheckMate.gif");
+            Image changeCheckMateImage = checkMateIcon.getImage();
+            Image changedCheckMateImage = changeCheckMateImage.getScaledInstance(150,150, Image.SCALE_SMOOTH);
+            ImageIcon ChangedCheckMateIcon = new ImageIcon(changedCheckMateImage);
+            String[] buttons = {"계속","종료"};
+            if(isCheckMate){
+                int input = JOptionPane.showOptionDialog(null,"<html><span style='font-size:5em'>CheckMate!!</span>" +
+                                "<br><span style='font-size:3em'>축하합니다! "+msg+"의 승리입니다!!",
+                        "게임종료",JOptionPane.YES_NO_OPTION,
+                        JOptionPane.PLAIN_MESSAGE,ChangedCheckMateIcon,buttons,"확인");
+                if(input ==JOptionPane.NO_OPTION) {
+                    System.exit(0);
+                }
+            }
+            else{
+                int input = JOptionPane.showOptionDialog(null,"<html><span style='font-size:5em'>StaleMate.</span>" +
+                                "<br><span style='font-size:3em'>무승부 입니다..승부는 다음기회에..!",
+                        "게임종료",JOptionPane.YES_NO_OPTION,
+                        JOptionPane.PLAIN_MESSAGE,ChangedCheckMateIcon,buttons,"확인");
+                if(input ==JOptionPane.NO_OPTION) {
+                    System.exit(0);
+                }
+            }
 
+
+        }
+
+    public void ShowCandidateTile(int columnPos, int rowPos){
         this.setPieceClicked(true);
         this.SelectedPiece(columnPos,rowPos);
         this.setTileLabel(selectedPiece[0],selectedPiece[1],columnPos,rowPos);
@@ -353,16 +382,17 @@ public class BoardUtil {
     }
 
     public void Check(int columnPos, int rowPos){
+        Aliance aliance = board.getTile()[columnPos][rowPos].getPiece().getAliance();
         if(this.isCheck(columnPos,rowPos)){
             System.out.println("!!!!!Check Event !!!!");
             this.isCheckState = true;
             if(this.isCheckMate(columnPos,rowPos)){
-                System.out.println("@@@@@CheckMate Event@@@@@");
+                CheckMateEvent(aliance, true);
             }
         }
         else if(this.isCheckMate(columnPos,rowPos)){
             this.isCheckState = false;
-            System.out.println("######StaleMate Event@@@@@@@");
+            CheckMateEvent(aliance,false);
         }
         else{
             this.isCheckState = false;
